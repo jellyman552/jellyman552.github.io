@@ -1,0 +1,16 @@
+{
+  "slug": "daily-dashboard",
+  "order": 2,
+  "title": "Daily Dashboard",
+  "tagline": "A morning dashboard: spending by category, recurring subscriptions, weather and today's calendar.",
+  "year": "2026",
+  "stack": ["Python", "FastAPI", "React", "Vite", "SimpleFIN", "Google Calendar API", "Tesseract OCR"],
+  "highlights": [
+    "Pulls bank transactions through SimpleFIN Bridge, chosen over Plaid because Plaid bills per API call",
+    "Homegrown transaction categorizer and recurring-charge detector, since SimpleFIN provides neither",
+    "A daily job writes JSON snapshots and the API serves from cache, so pages load instantly and stay under rate limits",
+    "Receipt scanning with local OCR; manual entries reconcile automatically once the bank transaction posts"
+  ],
+  "demo": null,
+  "source": null
+}

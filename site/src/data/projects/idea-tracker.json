@@ -1,0 +1,17 @@
+{
+  "slug": "idea-tracker",
+  "order": 1,
+  "title": "Idea Tracker",
+  "tagline": "A project tracker that Claude can update for me, through a remote MCP server I wrote.",
+  "year": "2026",
+  "stack": ["Python", "Flask", "SQLAlchemy", "SQLite", "MCP", "Jinja", "Docker", "Caddy"],
+  "highlights": [
+    "Remote MCP server (streamable HTTP) so Claude can create projects, tick milestones and log progress from any chat, on phone or desktop",
+    "Every change goes through one service layer and lands in an audit log with its source: web, CLI or MCP",
+    "Stale-project detection, plus weekly, monthly and yearly reviews with an activity heatmap",
+    "Syncs commits from linked GitHub repos every 3 hours on a systemd timer",
+    "Runs in Docker on Oracle Cloud behind Caddy, with nightly SQLite backups"
+  ],
+  "demo": null,
+  "source": null
+}

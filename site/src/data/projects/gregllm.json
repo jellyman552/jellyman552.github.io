@@ -1,0 +1,17 @@
+{
+  "slug": "gregllm",
+  "order": 4,
+  "title": "gregllm",
+  "tagline": "A Claude Code skill that answers \"what will this GregTech: New Horizons build cost?\" down to raw materials.",
+  "year": "2026",
+  "stack": ["Node.js", "Claude Code skill", "JSON", "Recipe graph"],
+  "highlights": [
+    "Expands multiblocks and batch crafts over real GTNH 2.9.0 recipe data (~93 MB) into raw materials, EU/t, duration and total EU",
+    "Picks the cheapest recipe chain under your voltage tier, then Claude confirms each choice with you",
+    "Downloads the recipe data on first run and verifies it against a pinned hash; no npm dependencies",
+    "Plan files pin recipe choices so a cost breakdown can be reproduced"
+  ],
+  "demo": null,
+  "demoNote": "Runs locally in Claude Code",
+  "source": "https://github.com/jellyman552/gregllm"
+}

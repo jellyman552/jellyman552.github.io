@@ -1,0 +1,7 @@
+# ORIGINAL résumé has the phone number — only site/public/Jagger_Nelson_Resume.pdf is public
+JaggerNelson_Resume_*.pdf
+node_modules/
+dist/
+.playwright-mcp/
+.env
+.DS_Store

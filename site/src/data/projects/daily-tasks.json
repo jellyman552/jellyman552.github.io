@@ -1,0 +1,16 @@
+{
+  "slug": "daily-tasks",
+  "order": 3,
+  "title": "Daily Tasks",
+  "tagline": "An iPhone home-screen app that pushes me to start tasks on time, and checks that I finished them.",
+  "year": "2026",
+  "stack": ["Node.js", "JavaScript", "Web Push", "Service Workers", "PWA", "Docker", "Caddy"],
+  "highlights": [
+    "Installable PWA with Web Push: a \"time to start\" alert, then \"did you finish?\" follow-ups until the task is done or skipped",
+    "One-off tasks and tasks that repeat on chosen weekdays",
+    "Lock Screen widget through Scriptable, using a read-only link",
+    "One Node.js server with a single dependency, in Docker behind Caddy with automatic HTTPS"
+  ],
+  "demo": null,
+  "source": null
+}
