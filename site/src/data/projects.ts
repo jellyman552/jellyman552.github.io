@@ -2,6 +2,8 @@ export type Shot = { src: string; alt: string }
 export type Challenge = { title: string; body: string }
 export type ReplayStep = { you: string; claude: string; tools: string[]; shot?: string; term?: string; caption: string }
 export type Replay = { title: string; note: string; steps: ReplayStep[] }
+export type WalkStep = { shot: string; title: string; text: string; notification?: { when: string; title: string; body: string } }
+export type Walkthrough = { title: string; note: string; steps: WalkStep[] }
 
 export type Project = {
   slug: string
@@ -23,6 +25,7 @@ export type Project = {
   tests?: number
   shots: Shot[]
   replay?: Replay
+  walkthrough?: Walkthrough
   // loaded from ./diagrams/<slug>.txt
   diagram?: string
 }

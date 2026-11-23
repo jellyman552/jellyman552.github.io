@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { PhoneWalkthrough } from '../components/PhoneWalkthrough'
 import { Replay } from '../components/Replay'
 import { LinkButton, Prompt, Tag } from '../components/ui'
 import { profile } from '../data/profile'
@@ -74,8 +75,15 @@ export function ProjectPage({ p }: { p: Project }) {
         </div>
       )}
 
+      {p.walkthrough && (
+        <div className="mt-10">
+          <PhoneWalkthrough data={p.walkthrough} />
+        </div>
+      )}
+
+      {p.shots.length > 0 && <H2>Screenshots</H2>}
       {p.shots.length > 0 && (
-        <div className="mt-10 grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {p.shots.map((s, k) => (
             <figure key={s.src} className={k === 0 ? 'sm:col-span-2' : ''}>
               <a href={s.src} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-lg border border-line hover:border-accent/60">

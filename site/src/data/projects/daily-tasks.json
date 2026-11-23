@@ -37,5 +37,46 @@
       "body": "A Scriptable script reads a read-only link that can only see today's tasks, so the widget never holds the app password."
     }
   ],
-  "shots": []
+  "shots": [],
+  "walkthrough": {
+    "title": "A day with Daily Tasks",
+    "note": "Screenshots are the real app with made-up tasks and the clock set to 8:20 AM. The notification text is the app's exact wording; the cards are drawn by this page.",
+    "steps": [
+      {
+        "shot": "/shots/daily-tasks/today.jpg",
+        "title": "Your day at a glance",
+        "text": "Every task has a start time and an estimate. The list shows what's done, what's running and what's late, with a progress bar for the day."
+      },
+      {
+        "shot": "/shots/daily-tasks/editor.jpg",
+        "title": "Add a task in seconds",
+        "text": "Name it, pick a start time and an estimate, and choose which weekdays it repeats."
+      },
+      {
+        "shot": "/shots/daily-tasks/today.jpg",
+        "title": "A push when it's time to start",
+        "text": "At 8:00 the server's tick loop sends the start reminder with the planned end time.",
+        "notification": {
+          "when": "8:00 AM",
+          "title": "Time to start: Review pull requests",
+          "body": "Planned for 45 min, until 08:45."
+        }
+      },
+      {
+        "shot": "/shots/daily-tasks/nudge.jpg",
+        "title": "A check-in if it runs long",
+        "text": "10 minutes past the estimate it asks if you finished, then every 30 minutes, at most 3 times. Tapping it opens the app on that task.",
+        "notification": {
+          "when": "8:05 AM",
+          "title": "Did you finish Water plants?",
+          "body": "It's 10 min past the 5 min estimate. Tap to mark it done."
+        }
+      },
+      {
+        "shot": "/shots/daily-tasks/settings.jpg",
+        "title": "Settings and the Lock Screen widget",
+        "text": "Send a test push, see how the reminders are timed, and copy the read-only link for the Scriptable widget."
+      }
+    ]
+  }
 }

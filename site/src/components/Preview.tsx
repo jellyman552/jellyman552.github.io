@@ -8,7 +8,9 @@ const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)')
 export function Preview({ p, active }: { p: Project; active: boolean }) {
   const [i, setI] = useState(0)
   const replayShots = (p.replay?.steps ?? []).flatMap((s) => (s.shot ? [{ src: s.shot, alt: s.caption }] : []))
-  const shots = replayShots.length ? replayShots : p.shots
+  const phoneShots = (p.walkthrough?.steps ?? []).map((s) => ({ src: s.shot, alt: s.title }))
+  const phone = phoneShots.length > 0
+  const shots = phone ? [...new Map(phoneShots.map((s) => [s.src, s])).values()] : replayShots.length ? replayShots : p.shots
   const n = shots.length
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export function Preview({ p, active }: { p: Project; active: boolean }) {
             alt={k === 0 ? s.alt : ''}
             loading="lazy"
             className={
-              'absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-700 ' +
+              (phone ? 'absolute inset-y-3 left-1/2 h-[calc(100%-1.5rem)] w-auto -translate-x-1/2 rounded-xl border border-line object-contain transition-opacity duration-700 ' : 'absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-700 ') +
               ((active ? i : 0) === k ? 'opacity-100' : 'opacity-0')
             }
           />
