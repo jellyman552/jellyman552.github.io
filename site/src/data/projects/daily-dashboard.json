@@ -19,8 +19,8 @@
     "A daily job writes JSON snapshots and the API serves from cache, so pages load instantly and stay under rate limits",
     "Receipt scanning with local OCR; manual entries reconcile automatically once the bank transaction posts"
   ],
-  "demo": null,
-  "source": null,
+  "demo": "https://dashboard-demo.161-153-101-90.sslip.io",
+  "source": "https://github.com/jellyman552/daily-dashboard",
   "role": "Solo: API, data pipeline, frontend, deployment",
   "problem": "Checking spending meant opening a bank app, weather meant another app, and my calendar a third. I wanted one page I open each morning that answers \"how am I doing this week?\" without paying per API call or waiting on slow APIs every load.",
   "challenges": [
@@ -37,6 +37,16 @@
       "body": "You can type in a purchase or scan a receipt (local Tesseract OCR plus regex parsing) and it counts right away. When the real transaction posts with the same amount within 3 days, the manual entry reconciles itself away so nothing is double-counted."
     }
   ],
-  "shots": [],
-  "demoPlanned": true
+  "shots": [
+    {
+      "src": "/shots/daily-dashboard/dashboard.jpg",
+      "alt": "The dashboard: weather, events, budgets and spending"
+    },
+    {
+      "src": "/shots/daily-dashboard/phone.jpg",
+      "alt": "The dashboard on a phone"
+    }
+  ],
+  "embed": "https://dashboard-demo.161-153-101-90.sslip.io",
+  "tests": 6
 }
