@@ -37,5 +37,33 @@
     }
   ],
   "shots": [],
-  "transcript": "gregllm"
+  "replay": {
+    "title": "Ask Claude what a build costs",
+    "note": "Reconstruction. The conversation was written for this page; the terminal output is real, from the calculator on GTNH 2.9.0 recipe data.",
+    "steps": [
+      {
+        "you": "How much do 4 Electric Blast Furnaces cost? I'm in MV.",
+        "claude": "I'll run the calculator capped at MV and let it pick the cheapest recipe chain, then check those picks with you.",
+        "tools": [
+          "node scripts/calc.mjs --item \"Electric Blast Furnace\" --amount 4 --auto --tier MV"
+        ],
+        "term": "$ node scripts/calc.mjs --item \"Electric Blast Furnace\" --amount 4 --auto --tier MV\nGTNH 2.9.0  targets: 4x Electric Blast Furnace\n\nRaw materials:\n  168x  Cast Iron Ingot\n  24x  Charcoal Dust\n  72x  Cobblestone (minecraft)\n  50x  Copper Ingot (IC2)\n  36x  Flint\n  24x  Glass Dust\n  64x  Invar Ingot\n  66x  Liveroot Dust\n  288 L  Molten Polyethylene (PE)  (= 2 ingots)\n  432 L  Molten Red Alloy  (= 3 ingots)\n  1152 L  Molten Rubber  (= 8 ingots)\n  864 L  Molten Soldering Alloy  (= 6 ingots)\n  12x  Red Alloy Ingot\n  24x  Steel Ingot\n  48x  Sticky Resin\n  4x  Tin Ingot (gregtech)",
+        "caption": "Everything expands down to ingots, dusts and fluids."
+      },
+      {
+        "you": "What machines am I running, and how much power?",
+        "claude": "22 machine steps, all LV or lower, and 210,352 EU in total. You'll end up with 4 spare circuit boards.",
+        "tools": [],
+        "term": "Steps (22):\n  4x Crafting (Shaped) -> Electric Blast Furnace\n  12x Crafting (Shaped) -> Blast Furnace\n  84x Crafting (Shaped) -> Cast Iron Plate\n  12x Circuit Assembler -> Electronic Circuit  15 EU/t LV, 10s each\n  22x Centrifuge -> Wood Pulp (gregtech)  5 EU/t LV, 25.2s each\n  8x Bending Machine -> Copper Foil  24 EU/t LV, 6.3s each\n  24x Alloy Smelter -> Glass Tube  15 EU/t LV, 6s each\n  …\n\nTotal energy: 210,352 EU\n\nLeftovers / byproducts:\n  4x  Circuit Board\n  2x  Wood Pulp (gregtech)",
+        "caption": "Each machine step with its EU/t and duration."
+      },
+      {
+        "you": "Are those the recipes I'd actually use?",
+        "claude": "It assumed hand-crafted plates and casings. If you'd rather use a Bending Machine for the plates, I'll pin that in a plan file and rerun.",
+        "tools": [],
+        "term": "Auto-picked recipes (pin in plan.choices to keep, or change):\n  Electric Blast Furnace: Crafting (Shaped)\n  Blast Furnace: Crafting (Shaped)\n  Cast Iron Plate: Crafting (Shaped)\n  Heat Proof Machine Casing: Crafting (Shaped)\n  Invar Plate: Crafting (Shaped)\n  Invar Frame Box: Crafting (Shaped)\n  Invar Rod: Crafting (Shaped)\n  1x Tin Cable: Cable Coating",
+        "caption": "Assumptions are shown, so Claude can confirm them instead of guessing."
+      }
+    ]
+  }
 }

@@ -54,7 +54,7 @@ export function ProjectCard({ p, index }: { p: Project; index: number }) {
         </LinkButton>
         {p.demo && <LinkButton href={p.demo}>▶ live demo</LinkButton>}
         {p.source && <LinkButton href={p.source}>source ↗</LinkButton>}
-        {!p.demo && !p.demoNote && <span className="px-1 text-xs text-faint">demo coming soon</span>}
+        {!p.demo && p.demoPlanned && <span className="px-1 text-xs text-faint">live demo coming soon</span>}
       </div>
     </article>
   )

@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { Replay } from '../components/Replay'
 import { LinkButton, Prompt, Tag } from '../components/ui'
 import { profile } from '../data/profile'
 import { projects, type Project } from '../data/projects'
@@ -58,7 +59,7 @@ export function ProjectPage({ p }: { p: Project }) {
             </LinkButton>
           )}
           {p.source && <LinkButton href={p.source}>source ↗</LinkButton>}
-          {!p.demo && (
+          {!p.demo && (p.demoNote || p.demoPlanned) && (
             <span className="rounded border border-dashed border-line px-3 py-1.5 text-sm text-faint">
               {p.demoNote ?? 'live demo coming soon'}
             </span>
@@ -66,6 +67,12 @@ export function ProjectPage({ p }: { p: Project }) {
           {!p.source && <span className="px-1 text-sm text-faint">source coming soon</span>}
         </div>
       </div>
+
+      {p.replay && (
+        <div className="mt-10">
+          <Replay data={p.replay} />
+        </div>
+      )}
 
       {p.shots.length > 0 && (
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
@@ -100,16 +107,6 @@ export function ProjectPage({ p }: { p: Project }) {
             <pre role="img" aria-label={`Architecture diagram for ${p.title}`} className="ascii text-[12px] leading-[1.35] text-accent-strong sm:text-[13px]">
               {p.diagram}
             </pre>
-          </figure>
-        </>
-      )}
-
-      {p.transcriptText && (
-        <>
-          <H2>Example run</H2>
-          <figure className="overflow-x-auto rounded-lg border border-line bg-surface p-4 sm:p-6">
-            <pre className="ascii text-[12px] leading-[1.45] text-text">{p.transcriptText}</pre>
-            <figcaption className="mt-3 text-xs text-faint">Real output from the calculator, trimmed.</figcaption>
           </figure>
         </>
       )}

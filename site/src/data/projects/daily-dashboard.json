@@ -37,5 +37,6 @@
       "body": "You can type in a purchase or scan a receipt (local Tesseract OCR plus regex parsing) and it counts right away. When the real transaction posts with the same amount within 3 days, the manual entry reconciles itself away so nothing is double-counted."
     }
   ],
-  "shots": []
+  "shots": [],
+  "demoPlanned": true
 }

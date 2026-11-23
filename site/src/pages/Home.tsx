@@ -1,6 +1,5 @@
 import { Neofetch } from '../components/Neofetch'
 import { ProjectCard } from '../components/ProjectCard'
-import { StatusPanel } from '../components/StatusPanel'
 import { LinkButton, Prompt, Section } from '../components/ui'
 import { education, experience, profile } from '../data/profile'
 import { projects } from '../data/projects'
@@ -8,7 +7,7 @@ import { projects } from '../data/projects'
 const stats = [
   [String(projects.length), 'projects'],
   [String(projects.reduce((n, p) => n + (p.tests ?? 0), 0)), 'automated tests'],
-  [String(projects.filter((p) => p.demo).length || projects.filter((p) => !p.demoNote).length), projects.some((p) => p.demo) ? 'live demos' : 'demos on the way'],
+  ['3', 'running daily on my server'],
 ]
 
 export function Home({ onPalette }: { onPalette: () => void }) {
@@ -58,10 +57,6 @@ export function Home({ onPalette }: { onPalette: () => void }) {
             <ProjectCard key={p.slug} p={p} index={i} />
           ))}
         </div>
-      </Section>
-
-      <Section id="status" cmd="uptime" title="Running right now">
-        <StatusPanel />
       </Section>
 
       <Section id="about" cmd="cat about.md" title="About">

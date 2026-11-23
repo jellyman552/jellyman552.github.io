@@ -50,16 +50,63 @@
       "alt": "Dashboard in cards view: one column per status, with progress bars and stale badges"
     },
     {
-      "src": "/shots/idea-tracker/project.jpg",
-      "alt": "Project page with milestones, dated progress notes and history"
+      "src": "/shots/idea-tracker/table.jpg",
+      "alt": "Table view, sortable by any column"
     },
     {
       "src": "/shots/idea-tracker/reviews.jpg",
       "alt": "Yearly review with an activity heatmap and totals"
-    },
-    {
-      "src": "/shots/idea-tracker/table-dark.jpg",
-      "alt": "Table view in dark mode, sortable by column"
     }
-  ]
+  ],
+  "replay": {
+    "title": "Talk to Claude, and the tracker updates itself",
+    "note": "Reconstruction. The conversation was written for this page; every tool call is real and ran against the demo tracker, and each screenshot shows its actual result.",
+    "steps": [
+      {
+        "you": "Thinking about a pantry app: scan groceries when I buy them and get a heads-up before anything expires. Can you add it to my tracker?",
+        "claude": "Added Pantry tracker as a software idea.",
+        "tools": [
+          "create_project(title=\"Pantry tracker\", type=\"software\", status=\"idea\", summary=\"Scan groceries as you buy them…\")"
+        ],
+        "shot": "/shots/idea-tracker/replay-1.jpg",
+        "caption": "The new project lands at the top of the Idea column."
+      },
+      {
+        "you": "Let's build it. Milestones: barcode scanning, expiry dates per item, reminder notifications, and a shared list with my roommate.",
+        "claude": "Moved it to Active and added the 4 milestones. Progress is 0 of 4.",
+        "tools": [
+          "update_project(project_id=13, status=\"active\")",
+          "add_milestones(project_id=13, titles=[\"Barcode scanning\", \"Expiry date per item\", …])"
+        ],
+        "shot": "/shots/idea-tracker/replay-2.jpg",
+        "caption": "Status, checklist and progress bar, all set from the chat."
+      },
+      {
+        "you": "Got barcode scanning working with the phone camera today.",
+        "claude": "Nice! Ticked Barcode scanning and logged a progress note. 1 of 4 done.",
+        "tools": [
+          "set_milestone_done(milestone_id=33, done=true)",
+          "add_note(project_id=13, note=\"Barcode scanning works with the phone camera…\")"
+        ],
+        "shot": "/shots/idea-tracker/replay-3.jpg",
+        "caption": "Notes Claude writes carry a Claude badge."
+      },
+      {
+        "you": "How did my week go?",
+        "claude": "One project touched: Pantry tracker went from idea to active, with 1 milestone done and 1 note. Want to write this week's reflection?",
+        "tools": [
+          "get_review(period=\"weekly\")"
+        ],
+        "shot": "/shots/idea-tracker/replay-4.jpg",
+        "caption": "The same numbers the Reviews tab shows."
+      },
+      {
+        "you": "Can I see what you changed?",
+        "claude": "Everything I did is in the audit log, tagged with source mcp and the old → new value of each field.",
+        "tools": [],
+        "shot": "/shots/idea-tracker/replay-5.jpg",
+        "caption": "Every write goes through one service layer, so nothing skips the audit log."
+      }
+    ]
+  }
 }
