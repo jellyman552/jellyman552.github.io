@@ -1,0 +1,22 @@
+ Claude apps                          Browser
+ (phone · web · desktop)                 │
+        │ MCP over HTTPS                 │ HTTPS
+        ▼                                ▼
+┌──────────────────── Caddy · TLS ───────────────────┐
+│  /mcp/<secret>                     everything else │
+└───────┬───────────────────────────────────┬────────┘
+        ▼                                   ▼
+┌─────────────────┐                ┌─────────────────┐
+│ MCP server      │                │ Flask web app   │
+│ 18 tools        │    flask CLI   │ Jinja + Pico    │
+└───────┬─────────┘        │       └────────┬────────┘
+        └──────────────────┼────────────────┘
+                           ▼
+              ┌─────────────────────────┐
+              │ services.py             │
+              │ validate + audit log    │
+              └────────────┬────────────┘
+                           ▼
+              ┌─────────────────────────┐
+              │ SQLite + migrations     │◀── GitHub sync (3h)
+              └─────────────────────────┘◀── nightly backup

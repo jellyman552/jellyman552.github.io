@@ -4,7 +4,15 @@
   "title": "Daily Tasks",
   "tagline": "An iPhone home-screen app that pushes me to start tasks on time, and checks that I finished them.",
   "year": "2026",
-  "stack": ["Node.js", "JavaScript", "Web Push", "Service Workers", "PWA", "Docker", "Caddy"],
+  "stack": [
+    "Node.js",
+    "JavaScript",
+    "Web Push",
+    "Service Workers",
+    "PWA",
+    "Docker",
+    "Caddy"
+  ],
   "highlights": [
     "Installable PWA with Web Push: a \"time to start\" alert, then \"did you finish?\" follow-ups until the task is done or skipped",
     "One-off tasks and tasks that repeat on chosen weekdays",
@@ -12,5 +20,22 @@
     "One Node.js server with a single dependency, in Docker behind Caddy with automatic HTTPS"
   ],
   "demo": null,
-  "source": null
+  "source": null,
+  "role": "Solo: server, PWA, push notifications, deployment",
+  "problem": "Calendar reminders tell you when something starts, but never check that you did it. I wanted a phone app that nudges me at a task's start time and keeps asking, politely, until I mark it done or skip it.",
+  "challenges": [
+    {
+      "title": "Push notifications on an iPhone without an App Store app",
+      "body": "iOS only allows Web Push for apps added to the Home Screen and served over HTTPS. The app is an installable PWA with a service worker, and Caddy provides automatic certificates on a free DuckDNS hostname."
+    },
+    {
+      "title": "Follow-ups that don't nag forever",
+      "body": "A tick loop on the server sends \"did you finish?\" 10 minutes after a task's estimate runs out, then every 30 minutes, at most 3 times. All three numbers are settings, and tapping the notification opens that exact task."
+    },
+    {
+      "title": "A Lock Screen widget with no native app",
+      "body": "A Scriptable script reads a read-only link that can only see today's tasks, so the widget never holds the app password."
+    }
+  ],
+  "shots": []
 }

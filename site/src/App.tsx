@@ -1,33 +1,64 @@
-import { ProjectCard } from './components/ProjectCard'
-import { LinkButton, Prompt, Section } from './components/ui'
-import { education, experience, profile } from './data/profile'
-import { projects } from './data/projects'
+import { useCallback, useEffect, useState } from 'react'
+import { CommandPalette } from './components/CommandPalette'
+import { profile } from './data/profile'
+import { getProject } from './data/projects'
+import { Home } from './pages/Home'
+import { ProjectPage } from './pages/ProjectPage'
+import { Link, usePath, useScrollOnRoute } from './router'
 
-const nav = [
-  { href: '#projects', label: 'projects' },
-  { href: '#about', label: 'about' },
-  { href: '#experience', label: 'experience' },
-  { href: '#contact', label: 'contact' },
-]
+const nav = ['projects', 'about', 'experience', 'contact']
 
 export default function App() {
+  const path = usePath()
+  useScrollOnRoute(path)
+  const [palette, setPalette] = useState(false)
+  const [toast, setToast] = useState('')
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setPalette((o) => !o)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  const notify = useCallback((msg: string) => {
+    setToast(msg)
+    setTimeout(() => setToast(''), 1800)
+  }, [])
+
+  const slug = path.match(/^\/projects\/([\w-]+)\/?$/)?.[1]
+  const project = slug ? getProject(slug) : undefined
+  const isHome = path === '/' || path === '/index.html'
+
   return (
     <>
-      <a href="#projects" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-accent focus:px-3 focus:py-2 focus:text-bg">
-        Skip to projects
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-accent focus:px-3 focus:py-2 focus:text-bg">
+        Skip to content
       </a>
 
       <header className="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <a href="#top" className="text-sm font-bold text-accent">
+          <Link href="/" className="text-sm font-bold text-accent">
             ~/{profile.handle}
-          </a>
+          </Link>
           <nav aria-label="Sections" className="flex items-center gap-3 text-sm sm:gap-5">
             {nav.map((n) => (
-              <a key={n.href} href={n.href} className="hidden text-muted hover:text-accent sm:inline">
-                ./{n.label}
-              </a>
+              <Link key={n} href={`/#${n}`} className="hidden text-muted hover:text-accent md:inline">
+                ./{n}
+              </Link>
             ))}
+            <button
+              type="button"
+              onClick={() => setPalette(true)}
+              aria-label="Open command palette"
+              className="rounded border border-line px-2 py-1 text-xs text-muted hover:border-accent hover:text-accent"
+            >
+              ⌘K
+            </button>
             <a
               href={profile.resume}
               download
@@ -39,109 +70,22 @@ export default function App() {
         </div>
       </header>
 
-      <main id="top" className="mx-auto max-w-5xl px-4 sm:px-6">
-        {/* hero */}
-        <section className="pt-16 pb-10 sm:pt-28 sm:pb-16" aria-label="Introduction">
-          <Prompt cmd="whoami" />
-          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-accent glow sm:text-6xl">
-            {profile.name}
-            <span className="cursor ml-2" aria-hidden />
-          </h1>
-          <p className="mt-3 text-lg text-accent-strong sm:text-xl">
-            {profile.role} <span className="text-faint">·</span> {profile.location}
-          </p>
-          <p className="mt-6 max-w-2xl leading-relaxed text-text">{profile.tagline}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <LinkButton href="#projects" primary>
-              ls ./projects
-            </LinkButton>
-            <LinkButton href={profile.github}>github ↗</LinkButton>
-            <LinkButton href={profile.linkedin}>linkedin ↗</LinkButton>
-          </div>
-        </section>
-
-        <Section id="projects" cmd="ls -l ~/projects" title="Projects">
-          <div className="grid gap-5 md:grid-cols-2">
-            {projects.map((p, i) => (
-              <ProjectCard key={p.slug} p={p} index={i} />
-            ))}
-          </div>
-        </Section>
-
-        <Section id="about" cmd="cat about.md" title="About">
-          <div className="max-w-3xl space-y-4 leading-relaxed text-text">
-            {profile.about.map((para) => (
-              <p key={para.slice(0, 24)}>{para}</p>
-            ))}
-          </div>
-        </Section>
-
-        <Section id="experience" cmd="tail -n 20 experience.log" title="Experience">
-          <ol className="space-y-8 border-l border-line pl-5 sm:pl-8">
-            {experience.map((j) => (
-              <li key={j.org} className="relative">
-                <span aria-hidden className="absolute top-1.5 -left-[1.6rem] h-2.5 w-2.5 rounded-full bg-accent sm:-left-[2.35rem]" />
-                <div className="flex flex-wrap items-baseline justify-between gap-x-4">
-                  <h3 className="font-bold text-text">
-                    {j.org} <span className="font-normal text-muted">· {j.role}</span>
-                  </h3>
-                  <span className="text-xs text-faint">{j.when}</span>
-                </div>
-                <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-muted">
-                  {j.points.map((pt) => (
-                    <li key={pt} className="flex gap-2">
-                      <span aria-hidden className="text-accent">›</span>
-                      <span>{pt}</span>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ol>
-
-          <h3 className="mt-12 mb-3 text-sm text-faint"># education</h3>
-          <ul className="space-y-1 text-sm">
-            {education.map((e) => (
-              <li key={e.what} className="flex flex-wrap gap-x-3">
-                <span className="text-text">{e.what}</span>
-                <span className="text-muted">{e.where}</span>
-                <span className="text-faint">{e.when}</span>
-              </li>
-            ))}
-          </ul>
-        </Section>
-
-        <Section id="contact" cmd="./contact.sh" title="Contact">
-          <p className="max-w-2xl leading-relaxed text-text">
-            Open to full-stack roles and freelance builds. The fastest way to reach me is email.
-          </p>
-          <dl className="mt-6 grid max-w-xl grid-cols-[6rem_1fr] gap-y-2 text-sm">
-            <dt className="text-faint">email</dt>
-            <dd>
-              <a className="break-all text-accent hover:underline" href={`mailto:${profile.email}`}>
-                {profile.email}
-              </a>
-            </dd>
-            <dt className="text-faint">linkedin</dt>
-            <dd>
-              <a className="text-accent hover:underline" href={profile.linkedin} target="_blank" rel="noopener noreferrer">
-                in/jagger-nelson
-              </a>
-            </dd>
-            <dt className="text-faint">github</dt>
-            <dd>
-              <a className="text-accent hover:underline" href={profile.github} target="_blank" rel="noopener noreferrer">
-                jellyman552
-              </a>
-            </dd>
-            <dt className="text-faint">résumé</dt>
-            <dd>
-              <a className="text-accent hover:underline" href={profile.resume} download>
-                Jagger_Nelson_Resume.pdf
-              </a>
-            </dd>
-          </dl>
-        </Section>
+      <main id="main" className="mx-auto max-w-5xl px-4 sm:px-6">
+        {project ? (
+          <ProjectPage key={project.slug} p={project} />
+        ) : isHome ? (
+          <Home onPalette={() => setPalette(true)} />
+        ) : (
+          <section className="py-24">
+            <p className="text-muted">
+              <span className="text-faint">$ </span>cd {path}
+            </p>
+            <h1 className="mt-3 text-2xl font-bold text-text">bash: cd: {path}: No such file or directory</h1>
+            <Link href="/" className="mt-6 inline-block text-accent hover:underline">
+              ← cd ~
+            </Link>
+          </section>
+        )}
       </main>
 
       <footer className="border-t border-line">
@@ -149,6 +93,11 @@ export default function App() {
           <span className="text-accent">$</span> exit · built with React, Vite and Tailwind · © {new Date().getFullYear()} {profile.name}
         </div>
       </footer>
+
+      <CommandPalette open={palette} onClose={() => setPalette(false)} notify={notify} />
+      <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-6 z-[70] flex justify-center">
+        {toast && <span className="rounded border border-accent bg-surface px-3 py-1.5 text-sm text-accent">{toast}</span>}
+      </div>
     </>
   )
 }

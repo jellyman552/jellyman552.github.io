@@ -4,7 +4,16 @@
   "title": "Idea Tracker",
   "tagline": "A project tracker that Claude can update for me, through a remote MCP server I wrote.",
   "year": "2026",
-  "stack": ["Python", "Flask", "SQLAlchemy", "SQLite", "MCP", "Jinja", "Docker", "Caddy"],
+  "stack": [
+    "Python",
+    "Flask",
+    "SQLAlchemy",
+    "SQLite",
+    "MCP",
+    "Jinja",
+    "Docker",
+    "Caddy"
+  ],
   "highlights": [
     "Remote MCP server (streamable HTTP) so Claude can create projects, tick milestones and log progress from any chat, on phone or desktop",
     "Every change goes through one service layer and lands in an audit log with its source: web, CLI or MCP",
@@ -13,5 +22,44 @@
     "Runs in Docker on Oracle Cloud behind Caddy, with nightly SQLite backups"
   ],
   "demo": null,
-  "source": null
+  "source": null,
+  "tests": 100,
+  "role": "Solo: data model, backend, MCP server, UI, deployment",
+  "problem": "My project ideas lived across dozens of Claude chats and notes apps, and nothing told me which ones I'd quietly abandoned. I wanted one place to track them, one that Claude could update directly while we worked, so the tracker stayed current without me copying anything over by hand.",
+  "challenges": [
+    {
+      "title": "Three ways in, one source of truth",
+      "body": "The web UI, a CLI and the MCP server all change the same data. Every write goes through one service layer (services.py) that validates input and writes an audit row with the old value, new value and source, so nothing can skip the history."
+    },
+    {
+      "title": "Securing a remote MCP endpoint",
+      "body": "The MCP server lives behind a long secret path, so every other path returns 404. Its container writes no access logs, so the secret never lands in a log file, and it only accepts requests for its own hostname."
+    },
+    {
+      "title": "Changing the schema on a live database",
+      "body": "Schema changes are versioned migrations that run when the container starts. The deploy script snapshots the live SQLite database first, and a test fails if the migrations ever drift from the models."
+    },
+    {
+      "title": "Activity without an activity table",
+      "body": "Stale detection, reviews and the yearly heatmap are all computed from the audit log plus synced GitHub commits, so there is no second copy of history to keep in sync."
+    }
+  ],
+  "shots": [
+    {
+      "src": "/shots/idea-tracker/dashboard.jpg",
+      "alt": "Dashboard in cards view: one column per status, with progress bars and stale badges"
+    },
+    {
+      "src": "/shots/idea-tracker/project.jpg",
+      "alt": "Project page with milestones, dated progress notes and history"
+    },
+    {
+      "src": "/shots/idea-tracker/reviews.jpg",
+      "alt": "Yearly review with an activity heatmap and totals"
+    },
+    {
+      "src": "/shots/idea-tracker/table-dark.jpg",
+      "alt": "Table view in dark mode, sortable by column"
+    }
+  ]
 }

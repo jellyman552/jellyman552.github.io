@@ -1,0 +1,18 @@
+┌─────────────────────────┐       ┌──────────────────┐
+│ iPhone Home Screen PWA  │       │ Lock Screen      │
+│ app.js + service worker │       │ widget           │
+└──────▲───────────┬──────┘       │ (Scriptable)     │
+  push │           │ HTTPS        └────────┬─────────┘
+       │           │                       │ read-only link
+┌──────┴───────────▼─── Caddy · TLS ───────▼─────────┐
+└────────────────────────┬───────────────────────────┘
+                         ▼
+        ┌─────────────────────────────────┐
+        │ server.js (Node)                │
+        │ tick loop:                      │
+        │   "Time to start: …"            │
+        │   "Did you finish …?" (max 3x)  │
+        │ web-push · VAPID keys           │
+        └────────────────┬────────────────┘
+                         ▼
+                   data/db.json

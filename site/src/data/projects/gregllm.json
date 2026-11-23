@@ -4,7 +4,12 @@
   "title": "gregllm",
   "tagline": "A Claude Code skill that answers \"what will this GregTech: New Horizons build cost?\" down to raw materials.",
   "year": "2026",
-  "stack": ["Node.js", "Claude Code skill", "JSON", "Recipe graph"],
+  "stack": [
+    "Node.js",
+    "Claude Code skill",
+    "JSON",
+    "Recipe graph"
+  ],
   "highlights": [
     "Expands multiblocks and batch crafts over real GTNH 2.9.0 recipe data (~93 MB) into raw materials, EU/t, duration and total EU",
     "Picks the cheapest recipe chain under your voltage tier, then Claude confirms each choice with you",
@@ -13,5 +18,24 @@
   ],
   "demo": null,
   "demoNote": "Runs locally in Claude Code",
-  "source": "https://github.com/jellyman552/gregllm"
+  "source": "https://github.com/jellyman552/gregllm",
+  "tests": 9,
+  "role": "Solo: calculator, data pipeline, Claude Code skill",
+  "problem": "In GregTech: New Horizons a single machine can hide hundreds of crafting steps across many tiers of recipes. Players plan builds in spreadsheets. I wanted to just ask \"what will this cost?\" and get the full raw-material bill, power use and leftovers.",
+  "challenges": [
+    {
+      "title": "A recipe graph with real choices",
+      "body": "Most items have several recipes and ore-dictionary slots that accept many items. With --auto the calculator picks the cheapest chain under your voltage tier, then Claude confirms those picks with you, and plan files pin them so the answer can be reproduced."
+    },
+    {
+      "title": "Data the repo isn't allowed to ship",
+      "body": "The recipe export has no license and contains game content, so the repo doesn't include it. A setup script downloads a pinned copy and verifies its hash on first run."
+    },
+    {
+      "title": "Keeping the LLM honest",
+      "body": "Claude never does the arithmetic. The skill tells it to run the scripts, ask for your tier, and surface each assumption before giving a final answer."
+    }
+  ],
+  "shots": [],
+  "transcript": "gregllm"
 }

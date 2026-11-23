@@ -4,7 +4,15 @@
   "title": "Daily Dashboard",
   "tagline": "A morning dashboard: spending by category, recurring subscriptions, weather and today's calendar.",
   "year": "2026",
-  "stack": ["Python", "FastAPI", "React", "Vite", "SimpleFIN", "Google Calendar API", "Tesseract OCR"],
+  "stack": [
+    "Python",
+    "FastAPI",
+    "React",
+    "Vite",
+    "SimpleFIN",
+    "Google Calendar API",
+    "Tesseract OCR"
+  ],
   "highlights": [
     "Pulls bank transactions through SimpleFIN Bridge, chosen over Plaid because Plaid bills per API call",
     "Homegrown transaction categorizer and recurring-charge detector, since SimpleFIN provides neither",
@@ -12,5 +20,22 @@
     "Receipt scanning with local OCR; manual entries reconcile automatically once the bank transaction posts"
   ],
   "demo": null,
-  "source": null
+  "source": null,
+  "role": "Solo: API, data pipeline, frontend, deployment",
+  "problem": "Checking spending meant opening a bank app, weather meant another app, and my calendar a third. I wanted one page I open each morning that answers \"how am I doing this week?\" without paying per API call or waiting on slow APIs every load.",
+  "challenges": [
+    {
+      "title": "Bank data on a personal budget",
+      "body": "Plaid bills per API call, which adds up for a dashboard refreshed daily. SimpleFIN Bridge costs a flat ~$15 a year but returns raw descriptions only, so I wrote the categorizer and the recurring-charge detector myself."
+    },
+    {
+      "title": "Fast pages over slow APIs",
+      "body": "A systemd timer runs one refresh job a day that calls SimpleFIN, NWS and Google Calendar and writes JSON snapshots. The API only reads those snapshots, so the page loads instantly and never hits rate limits."
+    },
+    {
+      "title": "Bank data lags reality",
+      "body": "You can type in a purchase or scan a receipt (local Tesseract OCR plus regex parsing) and it counts right away. When the real transaction posts with the same amount within 3 days, the manual entry reconciles itself away so nothing is double-counted."
+    }
+  ],
+  "shots": []
 }

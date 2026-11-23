@@ -2,16 +2,18 @@
 
 @theme {
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --color-bg: #0a0f0b;
-  --color-surface: #0f1711;
-  --color-raised: #142019;
-  --color-line: #1f3526;
-  --color-text: #d3ebd8;
-  --color-muted: #8fae97;
-  --color-faint: #5f7d67;
-  --color-accent: #4ade80;
-  --color-accent-strong: #86efac;
+  --color-bg: #0a0e12;
+  --color-surface: #0e151b;
+  --color-raised: #132029;
+  --color-line: #1e2d38;
+  --color-text: #d8e6ee;
+  --color-muted: #94a9b6;
+  --color-faint: #6c818e;
+  --color-accent: #03d7fc;
+  --color-accent-strong: #8ae9fd;
+  --color-ok: #34d399;
   --color-warn: #fbbf24;
+  --color-off: #4b5b66;
 }
 
 html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
@@ -33,7 +35,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--color-accent); 
 
 .cursor { display: inline-block; width: 0.6em; height: 1.1em; background: var(--color-accent); vertical-align: text-bottom; animation: blink 1.1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
-.glow { text-shadow: 0 0 18px rgba(74, 222, 128, 0.35); }
+.ascii { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace; font-variant-ligatures: none; }
+.glow { text-shadow: 0 0 18px rgba(3, 215, 252, 0.35); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

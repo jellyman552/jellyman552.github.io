@@ -1,0 +1,23 @@
+ SimpleFIN        NWS            Google
+ (bank)           (weather)      Calendar
+    │                │              │
+    └────────────────┼──────────────┘
+                     ▼
+     ┌───────────────────────────────┐
+     │ refresh_data.py   (daily,     │
+     │ categorize +       systemd    │
+     │ detect recurring   timer)     │
+     └───────────────┬───────────────┘
+                     ▼
+     ┌───────────────────────────────┐
+     │ JSON snapshot cache           │
+     └───────────────┬───────────────┘
+                     ▼
+     ┌───────────────────────────────┐
+     │ FastAPI  /api/*               │◀── receipt photo
+     │ serves from cache only        │    (Tesseract OCR)
+     └───────────────┬───────────────┘
+                     ▼
+     ┌───────────────────────────────┐
+     │ React + Vite dashboard        │
+     └───────────────────────────────┘

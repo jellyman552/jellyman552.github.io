@@ -1,0 +1,22 @@
+ "What do 4 EBFs cost? I'm in MV."
+                │
+                ▼
+ ┌─────────────────────────────────┐
+ │ Claude Code + SKILL.md          │  asks your tier,
+ │                                 │  confirms recipe choices
+ └────────────────┬────────────────┘
+                  ▼
+ ┌─────────────────────────────────┐
+ │ lookup.mjs   items · recipes    │
+ │ calc.mjs     expand to raw mats │
+ └────────────────┬────────────────┘
+                  ▼
+ ┌─────────────────────────────────┐
+ │ plans/*.json                    │  pins recipes +
+ │                                 │  ore-dict choices
+ └────────────────┬────────────────┘
+                  ▼
+ ┌─────────────────────────────────┐
+ │ GTNH 2.9.0 recipe data (local)  │  downloaded once,
+ │ ~93 MB                          │  hash-checked
+ └─────────────────────────────────┘

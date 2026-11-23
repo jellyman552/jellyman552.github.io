@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Link } from '../router'
 
 /** A shell prompt line: `jagger@portfolio:~$ <cmd>` */
 export function Prompt({ cmd, path = '~' }: { cmd: string; path?: string }) {
@@ -44,8 +45,9 @@ export function LinkButton({
   download?: boolean
 }) {
   const external = href.startsWith('http')
+  const A = href.startsWith('/') && !download ? Link : 'a'
   return (
-    <a
+    <A
       href={href}
       download={download || undefined}
       target={external ? '_blank' : undefined}
@@ -58,6 +60,6 @@ export function LinkButton({
       }
     >
       {children}
-    </a>
+    </A>
   )
 }
