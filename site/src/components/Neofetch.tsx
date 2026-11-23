@@ -1,12 +1,23 @@
 import { useEffect, useState } from 'react'
 import { profile } from '../data/profile'
 
-// ASCII jellyfish sprite: bobs, waves its tentacles and blinks now and then.
-const BODY = ['    .-"""""-.', '   /  o   o  \\', '  |     u     |', '   \\.-.-.-.-./']
-const BLINK = '   /  -   -  \\'
-const TENTACLES = [
-  ['    ) ( ) ( )', '   ( ) ( ) (', '    ) ( ) ( )'],
-  ['   ( ) ( ) (', '    ) ( ) ( )', '   ( ) ( ) ('],
+// Pixel-art jellyfish: each character is one pixel. It bobs, waves its
+// tentacles and blinks now and then. Drawn as SVG rects so pixels stay crisp.
+// . empty  X body  L highlight  E eye  T tentacle
+const DOME = [
+  '....XXXXXX....',
+  '..XXXXXXXXXX..',
+  '.XXLLXXXXXXXX.',
+  '.XLLXXXXXXXXX.',
+  'XXXXEXXXXEXXXX',
+  'XXXXEXXXXEXXXX',
+  'XXXXXXXXXXXXXX',
+  '.XX.XXX.XXX.X.',
+]
+const BLINK_ROW = 'XXXXXXXXXXXXXX'
+const WAVES = [
+  ['..T..T..T..T..', '.T..T..T..T...', '..T..T..T..T..', '.T..T..T..T...'],
+  ['.T..T..T..T...', '..T..T..T..T..', '.T..T..T..T...', '..T..T..T..T..'],
 ]
 const SEQ = [
   { t: 0, y: 0 },
@@ -16,12 +27,14 @@ const SEQ = [
   { t: 0, y: 1, blink: true },
   { t: 1, y: 0 },
 ]
-const HEIGHT = BODY.length + 3 + 1
-const frame = ({ t, y, blink }: { t: number; y: number; blink?: boolean }) => {
-  const body = blink ? [BODY[0], BLINK, BODY[2], BODY[3]] : BODY
-  const lines = [...Array(y).fill(''), ...body, ...TENTACLES[t]]
-  while (lines.length < HEIGHT) lines.push('')
-  return lines.join('\n')
+const PX = 7
+const W = DOME[0].length
+const H = DOME.length + WAVES[0].length + 1 // +1 row of bob room
+const FILL: Record<string, string> = {
+  X: 'var(--color-accent)',
+  L: 'var(--color-accent-strong)',
+  E: 'var(--color-surface)',
+  T: '#04acc9',
 }
 
 function Jelly() {
@@ -31,10 +44,22 @@ function Jelly() {
     const id = setInterval(() => setI((x) => (x + 1) % SEQ.length), 380)
     return () => clearInterval(id)
   }, [])
+  const f = SEQ[i]
+  const rows = [...DOME, ...WAVES[f.t]]
+  if (f.blink) rows[4] = BLINK_ROW
   return (
-    <pre aria-hidden className="ascii shrink-0 text-[13px] leading-[1.2] text-accent glow">
-      {frame(SEQ[i])}
-    </pre>
+    <svg
+      aria-hidden
+      width={W * PX}
+      height={H * PX}
+      viewBox={`0 0 ${W} ${H}`}
+      shapeRendering="crispEdges"
+      className="shrink-0 self-start drop-shadow-[0_0_10px_rgba(3,215,252,0.45)]"
+    >
+      {rows.flatMap((row, y) =>
+        [...row].map((c, x) => (c === '.' ? null : <rect key={`${x}-${y}`} x={x} y={y + f.y} width={1} height={1} fill={FILL[c]} />)),
+      )}
+    </svg>
   )
 }
 
