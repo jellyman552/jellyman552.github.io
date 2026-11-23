@@ -20,7 +20,7 @@
     "One Node.js server with a single dependency, in Docker behind Caddy with automatic HTTPS"
   ],
   "demo": null,
-  "source": null,
+  "source": "https://github.com/jellyman552/daily-tasks",
   "role": "Solo: server, PWA, push notifications, deployment",
   "problem": "Calendar reminders tell you when something starts, but never check that you did it. I wanted a phone app that nudges me at a task's start time and keeps asking, politely, until I mark it done or skip it.",
   "challenges": [
