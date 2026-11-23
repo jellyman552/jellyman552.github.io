@@ -22,7 +22,7 @@
     "Runs in Docker on Oracle Cloud behind Caddy, with nightly SQLite backups"
   ],
   "demo": null,
-  "source": null,
+  "source": "https://github.com/jellyman552/idea-tracker",
   "tests": 100,
   "role": "Solo: data model, backend, MCP server, UI, deployment",
   "problem": "My project ideas lived across dozens of Claude chats and notes apps, and nothing told me which ones I'd quietly abandoned. I wanted one place to track them, one that Claude could update directly while we worked, so the tracker stayed current without me copying anything over by hand.",

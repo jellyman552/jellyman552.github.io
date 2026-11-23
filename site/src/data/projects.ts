@@ -26,6 +26,7 @@ export type Project = {
   shots: Shot[]
   replay?: Replay
   walkthrough?: Walkthrough
+  embed?: string // a playable page shown on the case study
   // loaded from ./diagrams/<slug>.txt
   diagram?: string
 }

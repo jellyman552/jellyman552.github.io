@@ -1,0 +1,527 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Down to the Atom</title><meta name="description" content="Zoom from a person down to a single oxygen atom: fingertip, hair, cells, bacteria, a virus, DNA and a water molecule, with the Bohr and electron-cloud models of the atom."><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: full-bleed zoom canvas; floating readout up top, lesson card + stops docked at the bottom.
+   Single dark look on purpose: the backdrop color shifts with scale (human dusk → tissue → cell teal → molecular indigo → atomic black). */
+:root {
+  --bg: #1d1727;
+  --ink: #F3EEE6;
+  --mute: #B4ADC2;
+  --glass: rgba(14, 12, 24, 0.74);
+  --line: rgba(243, 238, 230, 0.16);
+  --accent: #FFC86B;
+  --accent-ink: #2A1A05;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); overflow: hidden; }
+.app { position: relative; height: 100%; overflow: hidden; }
+canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; display: block; cursor: ns-resize; }
+
+.top {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+  padding-block: 14px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  pointer-events: none;
+}
+.brand { display: grid; gap: 2px; min-width: 0; }
+.brand b { font-family: var(--display); font-weight: 800; font-size: 20px; letter-spacing: -0.01em; }
+.brand span { font-size: 13px; color: var(--mute); }
+.fov { text-align: right; display: grid; gap: 2px; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.fov strong { font-size: 20px; font-weight: 600; color: var(--accent); }
+.fov span { font-size: 11px; color: var(--mute); letter-spacing: 0.06em; text-transform: uppercase; }
+
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  display: grid; gap: 10px; justify-items: center;
+  padding-block: 28px 14px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: linear-gradient(to bottom, rgba(6, 5, 12, 0), rgba(6, 5, 12, 0.7) 40%);
+}
+.sheet > * { width: 100%; max-width: 560px; min-width: 0; }
+.card {
+  background: var(--glass); border: 1px solid var(--line); border-radius: 18px;
+  padding: 14px 16px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  min-height: 10.5rem; display: grid; align-content: start; gap: 4px;
+}
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.card h1 { font-family: var(--display); font-weight: 800; font-size: 26px; margin: 0; letter-spacing: -0.015em; text-wrap: balance; }
+.card p { margin: 2px 0 0; font-size: 15px; line-height: 1.45; color: rgba(243, 238, 230, 0.88); }
+.modes { display: flex; gap: 6px; margin-top: 8px; padding: 4px; border: 1px solid var(--line); border-radius: 999px; width: fit-content; }
+.modes button { font: 600 13px var(--body); color: var(--ink); background: transparent; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.modes button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+
+.controls { display: flex; align-items: center; gap: 10px; }
+.controls button {
+  flex: none; width: 40px; height: 40px; border-radius: 50%;
+  background: var(--glass); border: 1px solid var(--line); color: var(--ink);
+  font: 600 20px/1 var(--mono); cursor: pointer;
+}
+.controls input { flex: 1; min-width: 0; accent-color: var(--accent); }
+
+.stops { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.stops::-webkit-scrollbar { display: none; }
+.stops button {
+  flex: none; font: 600 13px var(--mono); color: var(--ink);
+  background: var(--glass); border: 1px solid var(--line); border-radius: 999px;
+  padding: 8px 12px; cursor: pointer; white-space: nowrap;
+}
+.stops button[aria-current="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<div class="app" id="app">
+  <canvas id="c" aria-label="Zoomable view from a person down to a single oxygen atom"></canvas>
+
+  <header class="top" id="top">
+    <div class="brand">
+      <b>Down to the Atom</b>
+      <span>Pinch, scroll, or drag to zoom</span>
+    </div>
+    <div class="fov" aria-live="polite">
+      <strong id="fov">4.50 m</strong>
+      <span id="fovExp">screen width · 10⁰ m</span>
+    </div>
+  </header>
+
+  <section class="sheet" id="sheet">
+    <div class="card">
+      <div class="eyebrow" id="size">≈ 1.75 m tall</div>
+      <h1 id="name">You</h1>
+      <p id="fact"></p>
+      <div class="modes" id="modes" hidden>
+        <button type="button" id="mBohr" aria-pressed="true">Bohr model</button>
+        <button type="button" id="mCloud" aria-pressed="false">Electron cloud</button>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" id="zOut" aria-label="Zoom out">−</button>
+      <input type="range" id="zoom" aria-label="Zoom level" min="0" max="11" step="0.01" value="0.35">
+      <button type="button" id="zIn" aria-label="Zoom in">+</button>
+    </div>
+    <nav class="stops" id="stops" aria-label="Jump to a scale"></nav>
+  </section>
+</div>
+
+<script>
+(() => {
+const TAU = Math.PI * 2;
+const log10 = Math.log10;
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const app = document.getElementById('app');
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d');
+const $ = id => document.getElementById(id);
+
+const Z_MAX = 1, Z_MIN = log10(0.09e-9);
+let z = log10(4.5), zTarget = z;
+let mode = 0, modeTarget = 0; // 0 Bohr, 1 cloud
+let w = 0, h = 0, dpr = 1, W = 300, cx = 0, cy = 0;
+
+function rr(c, x, y, ww, hh, r) {
+  c.beginPath();
+  if (c.roundRect) c.roundRect(x, y, ww, hh, r); else c.rect(x, y, ww, hh);
+}
+function seg(c, x1, y1, x2, y2) { c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); }
+function disc(c, x, y, r) { c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill(); }
+
+/* ---------- drawings (origin = the point we zoom into; s = object's real size in px) ---------- */
+function drawHuman(c, s) {
+  const H = s;
+  c.save(); c.globalAlpha *= 0.35; c.fillStyle = '#F3EEE6';
+  c.fillRect(-H * 2, 0.82 * H, H * 4, Math.max(1, H * 0.004)); c.restore();
+  c.fillStyle = '#E9C7A4'; c.strokeStyle = '#E9C7A4'; c.lineCap = 'round';
+  disc(c, 0.44 * H, -0.09 * H, 0.065 * H);
+  rr(c, 0.35 * H, -0.02 * H, 0.18 * H, 0.38 * H, 0.05 * H); c.fill();
+  c.lineWidth = 0.065 * H;
+  seg(c, 0.395 * H, 0.34 * H, 0.395 * H, 0.79 * H);
+  seg(c, 0.485 * H, 0.34 * H, 0.485 * H, 0.79 * H);
+  c.lineWidth = 0.05 * H;
+  seg(c, 0.515 * H, 0.03 * H, 0.565 * H, 0.36 * H);
+  seg(c, 0.37 * H, 0.03 * H, 0.04 * H, 0.0);
+  disc(c, 0.04 * H, 0, 0.026 * H);
+  c.lineWidth = 0.012 * H; seg(c, 0.03 * H, 0, 0.003 * H, 0);
+}
+function drawFingertip(c, s) {
+  const R = s / 2;
+  c.save(); c.beginPath(); c.arc(0, 0, R, 0, TAU); c.clip();
+  const g = c.createRadialGradient(-R * 0.2, -R * 0.25, R * 0.1, 0, 0, R);
+  g.addColorStop(0, '#EBC09E'); g.addColorStop(1, '#B9785A');
+  c.fillStyle = g; c.fillRect(-R, -R, 2 * R, 2 * R);
+  c.strokeStyle = 'rgba(110, 52, 34, 0.5)'; c.lineWidth = Math.max(0.6, s / 80);
+  for (let i = 1; i <= 30; i++) {
+    const k = i / 22;
+    c.beginPath();
+    c.ellipse(R * 0.06, -R * 0.08, k * R * 1.12, k * R * 0.92, 0.2, 0, TAU);
+    c.stroke();
+  }
+  c.restore();
+}
+function drawHair(c, s) {
+  c.save(); c.rotate(-0.5);
+  const L = Math.max(s * 40, 3000);
+  const g = c.createLinearGradient(0, -s / 2, 0, s / 2);
+  g.addColorStop(0, '#3E2618'); g.addColorStop(0.35, '#7A5136'); g.addColorStop(1, '#3A2216');
+  c.fillStyle = g; c.fillRect(-L, -s / 2, 2 * L, s);
+  const step = s * 0.35;
+  if (step > 3) {
+    c.strokeStyle = 'rgba(255, 220, 180, 0.22)'; c.lineWidth = Math.max(0.6, s * 0.01);
+    const lim = Math.min(L, 1600);
+    for (let x = -Math.floor(lim / step) * step; x < lim; x += step) {
+      c.beginPath(); c.moveTo(x, -s / 2); c.quadraticCurveTo(x + s * 0.12, 0, x + s * 0.05, s / 2); c.stroke();
+    }
+  }
+  c.restore();
+}
+function hexPath(c, x, y, a) {
+  c.beginPath();
+  for (let i = 0; i < 6; i++) { const t = TAU * i / 6 + Math.PI / 6; c.lineTo(x + a * Math.cos(t), y + a * Math.sin(t)); }
+  c.closePath();
+}
+function drawSkinCell(c, s) {
+  const a = s / 2, d = a * Math.sqrt(3);
+  const pts = [[0, 0]];
+  for (let i = 0; i < 6; i++) { const t = TAU * i / 6; pts.push([d * Math.cos(t), d * Math.sin(t)]); }
+  c.lineWidth = Math.max(1, s * 0.02);
+  pts.forEach(([x, y], i) => {
+    hexPath(c, x, y, a * 0.97);
+    c.fillStyle = i === 0 ? 'rgba(240, 176, 176, 0.42)' : 'rgba(225, 160, 168, 0.24)'; c.fill();
+    c.strokeStyle = 'rgba(255, 210, 205, 0.7)'; c.stroke();
+    c.fillStyle = 'rgba(165, 84, 140, 0.7)';
+    c.beginPath(); c.ellipse(x + (i % 3 - 1) * a * 0.06, y, a * 0.27, a * 0.19, i * 0.5, 0, TAU); c.fill();
+  });
+}
+function rbcOne(c, x, y, r) {
+  const g = c.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, '#8A1826'); g.addColorStop(0.4, '#A52432'); g.addColorStop(0.78, '#D24A4E'); g.addColorStop(1, '#7A1420');
+  c.fillStyle = g; disc(c, x, y, r);
+}
+function drawRBC(c, s) {
+  [[1.2, 0.35, 0.9], [-1.05, 0.62, 0.95], [0.25, -1.2, 0.9], [-1.3, -0.55, 0.85]].forEach(([x, y, k]) => rbcOne(c, x * s, y * s, k * s / 2));
+  rbcOne(c, 0, 0, s / 2);
+}
+function drawEcoli(c, s, t) {
+  c.save(); c.rotate(-0.3);
+  const len = s, wid = 0.38 * s;
+  c.strokeStyle = 'rgba(196, 232, 170, 0.6)'; c.lineWidth = Math.max(0.7, s * 0.012);
+  for (let k = 0; k < 4; k++) {
+    c.beginPath();
+    for (let i = 0; i <= 40; i++) {
+      const u = i / 40, x = len / 2 - wid * 0.1 + u * 1.3 * s;
+      const y = (k - 1.5) * wid * 0.22 + Math.sin(u * 14 + t * 4 + k) * 0.05 * s * u;
+      i ? c.lineTo(x, y) : c.moveTo(x, y);
+    }
+    c.stroke();
+  }
+  const g = c.createLinearGradient(0, -wid / 2, 0, wid / 2);
+  g.addColorStop(0, '#9BCB7F'); g.addColorStop(1, '#4C7A3D');
+  rr(c, -len / 2, -wid / 2, len, wid, wid / 2); c.fillStyle = g; c.fill();
+  c.strokeStyle = 'rgba(30, 60, 25, 0.5)'; c.lineWidth = Math.max(0.8, s * 0.01);
+  c.beginPath();
+  for (let i = 0; i <= 30; i++) { const u = i / 30; const x = -len * 0.3 + u * len * 0.6; const y = Math.sin(u * 18) * wid * 0.15; i ? c.lineTo(x, y) : c.moveTo(x, y); }
+  c.stroke();
+  c.restore();
+}
+function drawVirus(c, s) {
+  const R = 0.38 * s;
+  c.strokeStyle = '#E6B36A'; c.fillStyle = '#E6B36A'; c.lineWidth = Math.max(0.8, s * 0.018);
+  for (let i = 0; i < 26; i++) {
+    const a = TAU * i / 26, ca = Math.cos(a), sa = Math.sin(a);
+    seg(c, ca * R, sa * R, ca * (R + 0.1 * s), sa * (R + 0.1 * s));
+    disc(c, ca * (R + 0.11 * s), sa * (R + 0.11 * s), 0.024 * s);
+  }
+  const g = c.createRadialGradient(-R * 0.3, -R * 0.3, R * 0.1, 0, 0, R);
+  g.addColorStop(0, '#4A6C8E'); g.addColorStop(1, '#1F3347');
+  c.fillStyle = g; disc(c, 0, 0, R);
+  c.strokeStyle = '#8FB3D4'; c.lineWidth = Math.max(0.8, s * 0.012);
+  c.beginPath(); c.arc(0, 0, R, 0, TAU); c.stroke();
+  c.fillStyle = 'rgba(240, 126, 110, 0.85)';
+  for (let i = 0; i < 8; i++) { const a = TAU * i / 8 + 0.3; disc(c, Math.cos(a) * 0.18 * s, Math.sin(a) * 0.18 * s, 0.04 * s); }
+}
+function drawDNA(c, s, t) {
+  const pitch = 1.7 * s, amp = 0.42 * s;
+  const half = Math.min(20 * s, h * 0.6);
+  const rs = 0.17 * s, off = 2.2;
+  const cols = ['#FFB547', '#5FD3C6', '#FF7A8A', '#8EA6FF'];
+  const n0 = Math.ceil(-half / rs), n1 = Math.floor(half / rs);
+  if (n1 - n0 < 500) {
+    c.lineWidth = Math.max(0.6, s * 0.06);
+    for (let k = n0; k <= n1; k++) {
+      const y = k * rs, ph = y / pitch * TAU + t * 0.3;
+      c.strokeStyle = cols[((k % 4) + 4) % 4];
+      seg(c, amp * Math.sin(ph), y, amp * Math.sin(ph + off), y);
+    }
+  }
+  const step = Math.max(1.5, s * 0.05);
+  [[0, '#ECE6FF'], [off, '#B9AEEE']].forEach(([o, col]) => {
+    c.strokeStyle = col; c.lineWidth = Math.max(1.2, s * 0.12); c.lineCap = 'round';
+    c.beginPath();
+    for (let y = -half; y <= half; y += step) {
+      const x = amp * Math.sin(y / pitch * TAU + t * 0.3 + o);
+      y === -half ? c.moveTo(x, y) : c.lineTo(x, y);
+    }
+    c.stroke();
+  });
+}
+function ball(c, x, y, r, a, b) {
+  const g = c.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.1, x, y, r);
+  g.addColorStop(0, a); g.addColorStop(1, b);
+  c.fillStyle = g; disc(c, x, y, r);
+}
+function drawWater(c, s) {
+  const hx = 0.271 * s, hy = 0.21 * s;
+  ball(c, -hx, hy, 0.2 * s, '#FFFFFF', '#AEB6C9');
+  ball(c, hx, hy, 0.2 * s, '#FFFFFF', '#AEB6C9');
+  ball(c, 0, 0, 0.3 * s, '#FF8A78', '#C2302A');
+  if (s > 140) {
+    c.fillStyle = 'rgba(243, 238, 230, 0.9)'; c.font = `600 ${Math.round(s * 0.07)}px "JetBrains Mono", monospace`;
+    c.textAlign = 'center';
+    c.fillText('δ−', 0, -0.36 * s);
+    c.fillText('δ+', -hx - 0.24 * s, hy + 0.2 * s);
+    c.fillText('δ+', hx + 0.24 * s, hy + 0.2 * s);
+  }
+}
+
+/* atom: oxygen, 8 p / 8 n / 8 e */
+function gamma(k) { let v = 0; for (let i = 0; i < k; i++) v -= Math.log(1 - Math.random()); return v; }
+function randDir() {
+  const u = Math.random() * 2 - 1, th = Math.random() * TAU, r = Math.sqrt(1 - u * u);
+  return [r * Math.cos(th), r * Math.sin(th), u];
+}
+function sampleElectron() {
+  const pick = Math.random() * 8;
+  if (pick < 2) { const r = gamma(3) * 0.06; const d = randDir(); return d.map(v => v * r); }
+  if (pick < 4) { const r = gamma(6) * 0.095; const d = randDir(); return d.map(v => v * r); }
+  const axis = Math.floor(Math.random() * 3);
+  let d;
+  do { d = randDir(); } while (Math.random() > d[axis] * d[axis]);
+  const r = gamma(5) * 0.11;
+  return d.map(v => v * r);
+}
+const cloud = Array.from({ length: 1400 }, sampleElectron);
+const nucleons = Array.from({ length: 16 }, (_, i) => {
+  const r = Math.sqrt((i + 0.5) / 16) * 0.78, a = i * 2.39996;
+  return [r * Math.cos(a), r * Math.sin(a), i % 2 === 0];
+});
+
+function drawAtom(c, s, t) {
+  const S = s * 0.85;
+  const m = mode;
+  // nucleus (drawn far too big in Bohr view; shrinks toward true-ish scale in cloud view)
+  const nr = S * (0.085 * (1 - m) + 0.014 * m);
+  if (m > 0.01) {
+    c.save(); c.globalAlpha *= m;
+    const g = c.createRadialGradient(0, 0, 0, 0, 0, S * 0.95);
+    g.addColorStop(0, 'rgba(150, 205, 255, 0.42)'); g.addColorStop(0.35, 'rgba(120, 180, 255, 0.18)'); g.addColorStop(1, 'rgba(120, 180, 255, 0)');
+    c.fillStyle = g; disc(c, 0, 0, S * 0.95);
+    const th = reduced ? 0.6 : t * 0.15, ct = Math.cos(th), st = Math.sin(th), cp = Math.cos(0.35), sp = Math.sin(0.35);
+    const d = Math.max(0.9, S * 0.0065);
+    c.globalCompositeOperation = 'lighter';
+    c.fillStyle = 'rgba(160, 215, 255, 0.55)';
+    for (const [x, y, zz] of cloud) {
+      const x1 = x * ct + zz * st, z1 = -x * st + zz * ct;
+      const y1 = y * cp - z1 * sp;
+      c.fillRect(x1 * S - d / 2, y1 * S - d / 2, d, d);
+    }
+    c.restore();
+  }
+  if (m < 0.99) {
+    c.save(); c.globalAlpha *= (1 - m);
+    c.strokeStyle = 'rgba(243, 238, 230, 0.28)'; c.lineWidth = Math.max(1, S * 0.004);
+    const shells = [[0.24, 2, 1.1], [0.58, 6, 0.65]];
+    shells.forEach(([rad]) => { c.beginPath(); c.arc(0, 0, rad * S, 0, TAU); c.stroke(); });
+    c.fillStyle = '#9BD8FF'; c.shadowColor = 'rgba(155, 216, 255, 0.9)'; c.shadowBlur = Math.min(18, S * 0.03);
+    shells.forEach(([rad, n, sp]) => {
+      for (let i = 0; i < n; i++) {
+        const a = (reduced ? 0 : t * sp) + TAU * i / n;
+        disc(c, Math.cos(a) * rad * S, Math.sin(a) * rad * S, Math.max(2.5, S * 0.026));
+      }
+    });
+    c.restore();
+  }
+  if (nr * 0.3 > 1.2) {
+    for (const [x, y, p] of nucleons) ball(c, x * nr, y * nr, nr * 0.32, p ? '#FF9A8A' : '#ECE7F5', p ? '#D2453A' : '#9C95AE');
+  } else { c.fillStyle = '#FF8A78'; disc(c, 0, 0, Math.max(1.5, nr)); }
+}
+
+/* ---------- the tour ---------- */
+const objs = [
+  { id: 'human', chip: 'You', name: 'You', size: 1.75, label: '≈ 1.75 m tall', fin: null, stop: 0.62, draw: drawHuman,
+    fact: 'Start here. Zoom toward your fingertip and keep going. Each stop below is about 10 to 1,000 times smaller than the last.' },
+  { id: 'finger', chip: 'Fingertip', name: 'Fingertip', size: 0.015, label: '≈ 1.5 cm across', draw: drawFingertip,
+    fact: 'The ridges of a fingerprint are roughly half a millimeter apart. Everything from here down sits inside this patch of skin.' },
+  { id: 'hair', chip: 'Hair', name: 'Human hair', size: 80e-6, label: '≈ 80 µm wide', draw: drawHair,
+    fact: 'About the thinnest thing you can see with your bare eyes. The overlapping cuticle scales are what make hair feel rough one way.' },
+  { id: 'skin', chip: 'Skin cell', name: 'Skin cells', size: 30e-6, label: '≈ 30 µm across', draw: drawSkinCell,
+    fact: 'Your outer skin is flat cells packed like tiles. Each dark spot is a nucleus, where the cell keeps its DNA.' },
+  { id: 'rbc', chip: 'Blood cell', name: 'Red blood cells', size: 7.5e-6, label: '≈ 7.5 µm across', draw: drawRBC,
+    fact: 'A dimpled disc packed with hemoglobin to carry oxygen. Adults have roughly 25 trillion of them.' },
+  { id: 'ecoli', chip: 'Bacterium', name: 'E. coli bacterium', size: 2e-6, label: '≈ 2 µm long', draw: drawEcoli,
+    fact: 'A single-celled organism that swims by spinning its flagella. Still visible with a good light microscope.' },
+  { id: 'virus', chip: 'Virus', name: 'Influenza virus', size: 100e-9, label: '≈ 100 nm across', draw: drawVirus,
+    fact: 'Smaller than a wavelength of visible light, so a light microscope can’t resolve it. Scientists use electron microscopes.' },
+  { id: 'dna', chip: 'DNA', name: 'DNA double helix', size: 2e-9, label: '≈ 2 nm wide', draw: drawDNA, fout: [1.4, 3],
+    fact: 'Two sugar-phosphate backbones with base pairs as rungs, about 10 per turn. Each cell holds around 2 m of it, tightly coiled.' },
+  { id: 'water', chip: 'Water', name: 'Water molecule', size: 0.28e-9, label: '≈ 0.28 nm across', draw: drawWater, fout: [1.2, 3],
+    fact: 'H₂O bends at about 104.5°. Oxygen pulls the shared electrons closer, so it carries a partial negative charge (δ−).' },
+  { id: 'atom', chip: 'Atom', name: 'Oxygen atom', size: 0.15e-9, label: '≈ 0.15 nm across', draw: drawAtom, fin: [0.25, 0.6], fout: null,
+    fact: '' }
+];
+const ATOM_TEXT = [
+  'Bohr model (1913): 8 electrons on fixed circular orbits, 2 in the first shell and 6 in the second. Great for counting electrons, wrong about how they move.',
+  'Quantum model: electrons don’t follow paths. The cloud shows where you’re likely to find one, built from the 1s, 2s and three 2p orbitals. The real nucleus is about 100,000× smaller than the atom.'
+];
+objs.forEach(o => {
+  if (o.stop == null) o.stop = log10(o.size * (o.id === 'atom' ? 1.9 : 1.7));
+  if (o.fin === undefined) o.fin = [0.03, 0.12];
+  if (o.fout === undefined) o.fout = [2.5, 8];
+});
+function alphaFor(o, r) {
+  const lr = log10(r);
+  const fi = o.fin ? smooth(log10(o.fin[0]), log10(o.fin[1]), lr) : 1;
+  const fo = o.fout ? 1 - smooth(log10(o.fout[0]), log10(o.fout[1]), lr) : 1;
+  return fi * fo;
+}
+
+/* ---------- UI ---------- */
+const stopsEl = $('stops');
+objs.forEach(o => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = o.chip; b.dataset.id = o.id;
+  b.addEventListener('click', () => { zTarget = clamp(o.stop, Z_MIN, Z_MAX); });
+  stopsEl.appendChild(b); o.btn = b;
+});
+const slider = $('zoom');
+slider.max = (Z_MAX - Z_MIN).toFixed(2);
+let sliding = false;
+slider.addEventListener('pointerdown', () => sliding = true);
+addEventListener('pointerup', () => sliding = false);
+slider.addEventListener('input', () => { zTarget = Z_MAX - parseFloat(slider.value); });
+$('zIn').addEventListener('click', () => zTarget = clamp(zTarget - 0.5, Z_MIN, Z_MAX));
+$('zOut').addEventListener('click', () => zTarget = clamp(zTarget + 0.5, Z_MIN, Z_MAX));
+function setMode(v) {
+  modeTarget = v;
+  $('mBohr').setAttribute('aria-pressed', String(v === 0));
+  $('mCloud').setAttribute('aria-pressed', String(v === 1));
+  if (active && active.id === 'atom') $('fact').textContent = ATOM_TEXT[v];
+}
+$('mBohr').addEventListener('click', () => setMode(0));
+$('mCloud').addEventListener('click', () => setMode(1));
+
+cv.addEventListener('wheel', e => {
+  e.preventDefault();
+  const k = e.deltaMode === 1 ? 16 : 1;
+  zTarget = clamp(zTarget + e.deltaY * k * 0.0016, Z_MIN, Z_MAX);
+}, { passive: false });
+const ptrs = new Map(); let prevD = 0;
+cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); prevD = 0; });
+cv.addEventListener('pointermove', e => {
+  if (!ptrs.has(e.pointerId)) return;
+  const p = ptrs.get(e.pointerId), dy = e.clientY - p.y;
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size >= 2) {
+    const [a, b] = [...ptrs.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y);
+    if (prevD > 0) { z = zTarget = clamp(z - log10(d / prevD), Z_MIN, Z_MAX); }
+    prevD = d;
+  } else {
+    z = zTarget = clamp(z + dy * 0.008, Z_MIN, Z_MAX);
+  }
+});
+const endPtr = e => { ptrs.delete(e.pointerId); prevD = 0; };
+cv.addEventListener('pointerup', endPtr); cv.addEventListener('pointercancel', endPtr);
+
+function resize() {
+  const r = app.getBoundingClientRect();
+  w = r.width; h = r.height; dpr = Math.min(devicePixelRatio || 1, 2);
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  const top = $('top').getBoundingClientRect().bottom - r.top;
+  const bot = $('sheet').getBoundingClientRect().top - r.top + 28;
+  cx = w / 2; cy = (top + bot) / 2;
+  W = Math.max(140, Math.min(w, bot - top) * 0.92);
+}
+new ResizeObserver(resize).observe(app);
+resize();
+
+function fmt(m) {
+  const units = [[1, 'm'], [1e-2, 'cm'], [1e-3, 'mm'], [1e-6, 'µm'], [1e-9, 'nm'], [1e-12, 'pm']];
+  let u = units[units.length - 1];
+  for (const x of units) { if (m >= x[0] * (x[1] === 'cm' ? 1 : 1)) { u = x; break; } }
+  if (m >= 1) u = units[0];
+  const v = m / u[0];
+  return (v >= 100 ? v.toFixed(0) : v >= 10 ? v.toFixed(1) : v.toFixed(2)) + ' ' + u[1];
+}
+const SUP = { '-': '⁻', 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+const sup = n => String(n).split('').map(ch => SUP[ch]).join('');
+
+const bgStops = [[1, [43, 30, 46]], [-1.5, [44, 26, 36]], [-4.5, [42, 20, 32]], [-6, [14, 36, 39]], [-8, [18, 21, 52]], [-10.2, [8, 9, 19]]];
+function bgAt(zz) {
+  for (let i = 0; i < bgStops.length - 1; i++) {
+    const [z0, c0] = bgStops[i], [z1, c1] = bgStops[i + 1];
+    if (zz <= z0 && zz >= z1) { const t = (z0 - zz) / (z0 - z1); return c0.map((v, k) => Math.round(v + (c1[k] - v) * t)); }
+  }
+  return zz > bgStops[0][0] ? bgStops[0][1] : bgStops[bgStops.length - 1][1];
+}
+
+let active = null, last = performance.now(), time = 0, lastFov = '';
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now; time += dt;
+  z += (zTarget - z) * Math.min(1, dt * (reduced ? 20 : 7));
+  mode += (modeTarget - mode) * Math.min(1, dt * 5);
+  if (!reduced && mode > 0.01) for (let i = 0; i < 25; i++) cloud[(Math.random() * cloud.length) | 0] = sampleElectron();
+
+  const V = Math.pow(10, z), ppm = W / V;
+  const t = smooth(log10(0.25), log10(3), z);
+  const ox = cx - t * 0.77 * ppm, oy = cy - t * 0.56 * ppm;
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const [r, g, b] = bgAt(z);
+  ctx.fillStyle = `rgb(${r},${g},${b})`; ctx.fillRect(0, 0, w, h);
+
+  let best = null, bestD = Infinity;
+  for (const o of objs) {
+    const rr_ = o.size / V, a = alphaFor(o, rr_);
+    if (a > 0.3) { const d = Math.abs(log10(rr_) - log10(0.55)); if (d < bestD) { bestD = d; best = o; } }
+    if (a < 0.004) continue;
+    ctx.save(); ctx.translate(ox, oy); ctx.globalAlpha = a;
+    o.draw(ctx, o.size * ppm, time);
+    ctx.restore();
+  }
+  const vg = ctx.createRadialGradient(cx, cy, Math.min(w, h) * 0.25, cx, cy, Math.max(w, h) * 0.75);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.45)');
+  ctx.fillStyle = vg; ctx.fillRect(0, 0, w, h);
+
+  const span = V * (w / W);
+  const fov = fmt(span);
+  if (fov !== lastFov) {
+    lastFov = fov; $('fov').textContent = fov;
+    $('fovExp').textContent = 'screen width · 10' + sup(Math.floor(log10(span))) + ' m';
+  }
+  if (best && best !== active) {
+    active = best;
+    $('name').textContent = best.name; $('size').textContent = best.label;
+    $('fact').textContent = best.id === 'atom' ? ATOM_TEXT[modeTarget] : best.fact;
+    $('modes').hidden = best.id !== 'atom';
+    objs.forEach(o => o.btn.setAttribute('aria-current', String(o === best)));
+    const bt = best.btn;
+    stopsEl.scrollTo({ left: bt.offsetLeft - stopsEl.clientWidth / 2 + bt.offsetWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+  }
+  if (!sliding) slider.value = (Z_MAX - z).toFixed(2);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>

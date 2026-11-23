@@ -75,6 +75,38 @@ export function ProjectPage({ p }: { p: Project }) {
         </div>
       )}
 
+      {p.embed && (
+        <section aria-labelledby="try-h" className="mt-10 overflow-hidden rounded-lg border border-line bg-surface">
+          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3">
+            <h2 id="try-h" className="text-sm font-bold text-text">
+              <span className="text-faint">▸ </span>Try it right here
+            </h2>
+            {p.demo && (
+              <a href={p.demo} target="_blank" rel="noopener noreferrer" className="text-xs text-muted hover:text-accent">
+                open full screen ↗
+              </a>
+            )}
+          </header>
+          {/* On phones, dragging inside the embed would zoom instead of scrolling the
+              page, so show a still that opens it full screen instead. */}
+          {p.demo && p.shots[0] && (
+            <a href={p.demo} target="_blank" rel="noopener noreferrer" className="relative block md:hidden">
+              <img src={p.shots[0].src} alt={p.shots[0].alt} className="block w-full" />
+              <span className="absolute inset-0 flex items-center justify-center bg-bg/40">
+                <span className="rounded border border-accent bg-accent px-4 py-2 text-sm text-bg">▶ play full screen</span>
+              </span>
+            </a>
+          )}
+          <iframe
+            src={p.embed}
+            title={`${p.title}, interactive`}
+            loading="lazy"
+            allow="fullscreen"
+            className="hidden h-[78vh] max-h-[720px] min-h-[520px] w-full bg-bg md:block"
+          />
+        </section>
+      )}
+
       {p.walkthrough && (
         <div className="mt-10">
           <PhoneWalkthrough data={p.walkthrough} />

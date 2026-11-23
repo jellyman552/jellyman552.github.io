@@ -1,0 +1,68 @@
+{
+  "slug": "down-to-the-atom",
+  "order": 5,
+  "title": "Down to the Atom",
+  "tagline": "An interactive lesson that zooms from a person down to a single oxygen atom, so students can see what's too small for the naked eye.",
+  "year": "2026",
+  "stack": [
+    "JavaScript",
+    "HTML Canvas",
+    "Logarithmic zoom",
+    "Accessibility"
+  ],
+  "highlights": [
+    "One continuous zoom across ten orders of magnitude, from a 1.75 m person to a 0.15 nm atom, with ten stops and a fact card at each",
+    "Switch between the Bohr model and the quantum electron cloud, drawn from 1,400 points sampled from the 1s, 2s and 2p orbital shapes",
+    "Works with scroll, pinch, drag or a slider, on phones, tablets and laptops",
+    "One HTML file and the Canvas API: no build step and no dependencies"
+  ],
+  "demo": "https://jellyman552.github.io/play/down-to-the-atom/",
+  "embed": "/play/down-to-the-atom/index.html",
+  "source": "https://github.com/jellyman552/down-to-the-atom",
+  "role": "Solo: lesson design, science content, canvas drawings and interactions",
+  "problem": "Students can't see a cell, a virus or an atom, so how small they are and how they're built stays abstract. I wanted a lesson they could play with: start at a person, keep zooming, and have each stop explain what you're looking at and how big it really is, all the way down to the atom.",
+  "challenges": [
+    {
+      "title": "Ten orders of magnitude on one screen",
+      "body": "Everything is drawn from a single logarithmic zoom value. Each object is drawn at its true size in pixels and fades in and out over its own size range, so the scene morphs smoothly from one scale to the next instead of cutting between pictures."
+    },
+    {
+      "title": "Teaching both atom models honestly",
+      "body": "The Bohr view counts electrons per shell (2 and 6). The cloud view samples electron positions from orbital probability shapes and shrinks the nucleus toward its true proportion, with a note on what each model gets right and wrong."
+    },
+    {
+      "title": "Readable for every student",
+      "body": "Atkinson Hyperlegible, a font designed for low-vision readers; touch-friendly controls; reduced-motion support; and a background color that shifts with scale as an extra cue."
+    },
+    {
+      "title": "A live sense of scale",
+      "body": "A readout shows the width of the screen in meters and as a power of ten as you zoom, so students connect what they see to the actual numbers."
+    }
+  ],
+  "shots": [
+    {
+      "src": "/shots/down-to-the-atom/you.jpg",
+      "alt": "Start: a person, 1.75 m tall"
+    },
+    {
+      "src": "/shots/down-to-the-atom/blood.jpg",
+      "alt": "Red blood cells, about 7.5 µm across"
+    },
+    {
+      "src": "/shots/down-to-the-atom/virus.jpg",
+      "alt": "An influenza virus, about 100 nm across"
+    },
+    {
+      "src": "/shots/down-to-the-atom/dna.jpg",
+      "alt": "The DNA double helix, about 2 nm wide"
+    },
+    {
+      "src": "/shots/down-to-the-atom/atom.jpg",
+      "alt": "An oxygen atom in the Bohr model"
+    },
+    {
+      "src": "/shots/down-to-the-atom/cloud.jpg",
+      "alt": "The same atom as a quantum electron cloud"
+    }
+  ]
+}
