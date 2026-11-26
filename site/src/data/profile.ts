@@ -32,7 +32,7 @@ export const experience: Job[] = [
       'Designed and built OrcaHub (Flask, React, Okta SSO, AWS ECS/Docker) for 10–100 QA and manufacturing users: deviation tracking synced from MasterControl, batch and operator scheduling checked against training records, and downtime tracking. Took it through user acceptance testing.',
       'Cut the scheduling page load from ~60s to under 3s by reducing ~8,400 database queries per load to ~180, with connection pooling and request-scoped caching.',
       'Built a cryo scheduler, a training site and a shift-passdown app that posts to Slack, saving an estimated ~800 hours of manual work a year.',
-      'Integrated Slack and SharePoint (Microsoft Graph) with credentials kept in AWS Secrets Manager; drafted the GxP impact assessment.',
+      'Drafted the GxP impact assessment for OrcaHub against 21 CFR Part 11 (audit trails, access control, electronic records), and integrated Slack and SharePoint (Microsoft Graph) with credentials in AWS Secrets Manager.',
     ],
   },
   {
